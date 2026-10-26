@@ -1,0 +1,50 @@
+<evaluation>
+  <qa_pair>
+    <question>Na fase do webhook, qual é o nome do cabeçalho HTTP cujo valor é o HMAC do corpo calculado com o App Secret, usado pelo servidor para rejeitar eventos que não vieram da Meta?</question>
+    <answer>X-Hub-Signature-256</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Qual código de erro de envio indica que o nome de exibição de um número fornecido pelo WhatsApp ainda precisa ser aprovado pela Meta?</question>
+    <answer>131037</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Para o Usuário do Sistema conseguir listar templates sem o erro #200, qual permissão específica precisa ser atribuída a ele na conta de mensagens da WABA (texto exato da tela)?</question>
+    <answer>Modelos de mensagem (ver e gerenciar)</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Na coexistência, quais são os três valores que o Configurador de cadastro incorporado manda em extras (nomes das chaves, em ordem alfabética, separados por vírgula)?</question>
+    <answer>featureType, sessionInfoVersion, version</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Qual chave de extras NÃO deve ser enviada na coexistência porque faz a Meta rodar o cadastro padrão e ignorar o featureType?</question>
+    <answer>setup</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Um token de Usuário do Sistema permanente aparece em debug_token com qual valor de type e qual valor de expires_at?</question>
+    <answer>SYSTEM_USER e 0</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Segundo o catálogo de erros, o erro #3441034 ("não se qualifica para registro ou migração") prova que o número é inelegível para Coexistência? Responda sim ou não.</question>
+    <answer>não</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Qual é a única situação em que um template da Meta pode ser editado, segundo o catálogo de erros e a fase de templates?</question>
+    <answer>Quando o status é REJECTED</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Qual erro (código numérico) aparece quando o callback do webhook falha porque a Meta não conseguiu resolver o DNS do domínio, e o que o guia manda fazer?</question>
+    <answer>2200; confirmar o handshake com curl e repetir a assinatura</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Qual é a moeda cuja definição na WABA é irreversível e foi escolhida no caso real brasileiro, e em qual wizard do billing hub ela é definida?</question>
+    <answer>BRL; CHANGE_COUNTRY_CURRENCY</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Qual combinação de dois campos do número a Meta considera a prova oficial de que a coexistência está ativa? Responda no formato campo=valor, campo=valor.</question>
+    <answer>is_on_biz_app=true, platform_type=CLOUD_API</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Na coexistência, quantas vezes cada sync_type do endpoint smb_app_data pode ser chamado, e em até quantas horas após o fim do cadastro?</question>
+    <answer>uma vez; 24 horas</answer>
+  </qa_pair>
+</evaluation>

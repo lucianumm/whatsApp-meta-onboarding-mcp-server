@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: Build, smoke test e geração da documentação
+        run: npm run check
+      - name: docs/ precisa estar em dia com src/knowledge/
+        run: git diff --exit-code -- docs || (echo "::error::Rode 'npm run docs' e faça commit de docs/" && exit 1)
