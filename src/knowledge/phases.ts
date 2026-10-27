@@ -214,6 +214,12 @@ export const PHASES: Phase[] = [
         lived: true,
       },
       {
+        symptom: "A mesma conta responde por dois IDs (o 'WABA ID' e o da 'conta de mensagens'); o health_status do número cita um, o sistema usa outro.",
+        cause: "Os dois são aliases da mesma conta: ambos listam o mesmo número em /phone_numbers. Mas subscribed_apps é por ID: assinar em um deixa o outro vazio, e a Meta roteia status e mensagens recebidas pelo ID que o health_status aponta.",
+        fix: "Compare o ID da entidade WABA em GET /{phone_number_id}?fields=health_status com o seu META_WABA_ID (o wa_diagnose faz). Se diferirem, assine o app nos dois IDs.",
+        lived: true,
+      },
+      {
         symptom: "Vejo várias contas com o mesmo nome e não sei qual é.",
         cause: "Várias WABAs homônimas (resíduo do processo de verificação).",
         fix: "Procure a que tem o número dentro, pelo ID. A API só enxerga as WABAs atribuídas ao usuário do token; para as demais só o navegador logado como administrador.",
@@ -248,6 +254,12 @@ export const PHASES: Phase[] = [
         symptom: "Token válido, mas a WABA não aparece.",
         cause: "O Usuário do Sistema não foi atribuído àquela WABA (atribuir a uma WABA não vale para as outras).",
         fix: "Atribuir pessoas na WABA certa. Depois de salvar, a tela às vezes mostra 'Nenhum ativo atribuído' — recarregue antes de concluir que falhou.",
+        lived: true,
+      },
+      {
+        symptom: "(#10) 'You do not have WhatsApp granular permission for sending messages on behalf of this WhatsApp Business Account' ao enviar.",
+        cause: "O escopo do token existe, mas o Usuário do Sistema não tem controle de mensagens sobre a WABA. Atribuir só 'Modelos de mensagem' basta para listar templates e NÃO basta para enviar. O token antigo pode não herdar a permissão nova.",
+        fix: "Adicionar a WABA aos ativos do usuário com Controle total (ou Números + Mensagens), gerar um token novo e colar no sistema. Confira o granular_scopes com wa_check_token. Depois do ajuste o erro some no envio seguinte.",
         lived: true,
       },
       {
@@ -304,6 +316,12 @@ export const PHASES: Phase[] = [
         lived: true,
       },
       {
+        symptom: "Callback verificado, campo 'messages' assinado, wa_check_webhook ok — e mesmo assim zero eventos (nem 'delivered' nem mensagens recebidas).",
+        cause: "O app estava inscrito só em um dos dois IDs da mesma conta; a Meta entrega pelo outro, que ficou com subscribed_apps vazio.",
+        fix: "Assine o app também no ID que o health_status do número aponta (wa_diagnose mostra a diferença) e teste com mensagem nova.",
+        lived: true,
+      },
+      {
         symptom: "Todo evento é recusado por assinatura.",
         cause: "App Secret ausente ou de outro app.",
         fix: "Cole o App Secret do app CERTO no sistema (você, não o agente). Bom sistema confere a chave na Meta antes de salvar.",
@@ -350,6 +368,12 @@ export const PHASES: Phase[] = [
         symptom: "Saúde do número mostra 141006 (erro no método de pagamento).",
         cause: "Bloqueia conversas iniciadas pela empresa.",
         fix: "Cadastrar/corrigir a forma de pagamento.",
+        lived: true,
+      },
+      {
+        symptom: "Cadastrei o cartão e quero saber se liberou.",
+        cause: "A API não expõe a forma de pagamento, e GET /{waba_id}?fields=primary_funding_id responde #10 'exige Business Solution Provider'.",
+        fix: "Leia GET /{phone_number_id}?fields=health_status: a entidade WABA passa de BLOCKED (141006) para AVAILABLE. Só então dispare — o que foi aceito durante o bloqueio não é reenviado.",
         lived: true,
       },
     ],
@@ -423,6 +447,12 @@ export const PHASES: Phase[] = [
         symptom: "Duas conversas para a mesma pessoa (55DD9XXXXXXXX e 55DDXXXXXXXX).",
         cause: "Número brasileiro com e sem o nono dígito: o WhatsApp identifica de um jeito no webhook e você digitou de outro.",
         fix: "Gere as duas variantes do número e procure conversa/contato por qualquer uma delas.",
+        lived: true,
+      },
+      {
+        symptom: "Campanha toda 'enviada' (wamid devolvido), mas nada chega ao celular e nenhum status volta.",
+        cause: "Dois suspeitos que se somam: (1) WABA bloqueada por pagamento (141006) — a API aceita e a recusa só vem no status; (2) webhook sem assinatura no ID certo da conta, então nem a recusa chega ao sistema.",
+        fix: "Rode wa_diagnose: ele lê o health_status do número e compara os IDs da WABA. Resolva o pagamento e a assinatura, e dispare uma campanha nova.",
         lived: true,
       },
       {

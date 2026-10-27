@@ -24,6 +24,9 @@
 - `vivido` **Token válido, mas a WABA não aparece.**
   - Causa: O Usuário do Sistema não foi atribuído àquela WABA (atribuir a uma WABA não vale para as outras).
   - O que fazer: Atribuir pessoas na WABA certa. Depois de salvar, a tela às vezes mostra 'Nenhum ativo atribuído' — recarregue antes de concluir que falhou.
+- `vivido` **(#10) 'You do not have WhatsApp granular permission for sending messages on behalf of this WhatsApp Business Account' ao enviar.**
+  - Causa: O escopo do token existe, mas o Usuário do Sistema não tem controle de mensagens sobre a WABA. Atribuir só 'Modelos de mensagem' basta para listar templates e NÃO basta para enviar. O token antigo pode não herdar a permissão nova.
+  - O que fazer: Adicionar a WABA aos ativos do usuário com Controle total (ou Números + Mensagens), gerar um token novo e colar no sistema. Confira o granular_scopes com wa_check_token. Depois do ajuste o erro some no envio seguinte.
 - `vivido` **O usuário tem 'Acesso total' na conta, com pagamento e atribuição.**
   - Causa: Atribuição mais ampla que o necessário.
   - O que fazer: Reduza para Números (ver e gerenciar) + Mensagens (+ Modelos).

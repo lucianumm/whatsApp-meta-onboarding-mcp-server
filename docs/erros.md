@@ -22,8 +22,8 @@
 
 ## #141006 — Erro no método de pagamento (saúde do número)
 `vivido` `#faturamento`
-- **Significa:** Aparece na saúde do número e bloqueia conversas iniciadas pela empresa.
-- **O que fazer:** Cadastrar ou corrigir a forma de pagamento no billing hub.
+- **Significa:** Aparece na saúde do número e bloqueia conversas iniciadas pela empresa. A API ainda ACEITA o envio e devolve o wamid (a mensagem fica 'enviada'); a recusa vem depois, só pelo webhook de status.
+- **O que fazer:** Cadastrar ou corrigir a forma de pagamento no billing hub (você digita o cartão). Confira com wa_list_phone_numbers / wa_diagnose até o can_send_message da WABA voltar a AVAILABLE e então envie de novo: o que foi aceito durante o bloqueio não é reentregue.
 - **Fase relacionada:** `faturamento`
 
 ## #3441034 — Número não se qualifica para registro ou migração
@@ -61,6 +61,24 @@
 - **Significa:** Caso vivido: template com cabeçalho de imagem disparado sem reenviar a mídia. O header_handle da criação só vale para a aprovação.
 - **O que fazer:** Mande o componente header com a imagem em todo envio; confira os demais parâmetros do template.
 - **Fase relacionada:** `templates`
+
+## #10 — Sem permissão granular para enviar nesta WABA (#10)
+`vivido` `#token` `#envio`
+- **Significa:** Caso vivido: o token tem o escopo whatsapp_business_messaging, mas o Usuário do Sistema não foi atribuído à WABA com controle de mensagens. Só 'Modelos de mensagem' (que basta para sincronizar templates) não permite enviar. O envio falha na hora, sem wamid.
+- **O que fazer:** Configurações do negócio → Usuários do sistema → Adicionar ativos → Contas do WhatsApp → marque a WABA e dê Controle total (ou Números + Mensagens). Gere o token de novo no mesmo usuário, com whatsapp_business_messaging e whatsapp_business_management, e cole no sistema. Valide com wa_check_token (granular_scopes deve listar a WABA nos dois escopos).
+- **Fase relacionada:** `usuario-sistema-token`
+
+## #10 — Campo exclusivo de BSP pedido a uma WABA comum (#10)
+`vivido` `#faturamento` `#ids`
+- **Significa:** Caso vivido: GET /{waba_id} com campos como primary_funding_id pode responder 'esta ação exige que o negócio dono do app seja Business Solution Provider'. Não é falta de permissão do seu token.
+- **O que fazer:** Não dá para ler forma de pagamento pela API. Leia a saúde pelo NÚMERO: GET /{phone_number_id}?fields=health_status (traz can_send_message por entidade, com o erro de cada uma, como 141006). O wa_diagnose já faz isso.
+- **Fase relacionada:** `faturamento`
+
+## Nenhum aviso de status/mensagem chega, mas a WABA 'está assinada'
+`vivido` `#webhook` `#ids`
+- **Significa:** Caso vivido: a mesma conta aparece com dois IDs (o da API e o 'conta de mensagens' do Gerenciador), ambos listam o mesmo número. O app estava inscrito em um deles; a Meta roteia status e mensagens recebidas pelo outro (o que aparece na entidade WABA do health_status do número). O campo 'messages' e o callback do app podem estar corretos e ainda assim nada chega.
+- **O que fazer:** Rode wa_diagnose: ele compara o ID da entidade WABA em health_status com o configurado. Inscreva o app em AMBOS os IDs (wa_subscribe_webhooks para cada um) e confira wa_check_webhook nos dois. Depois mande uma mensagem nova: eventos passados não são reentregues.
+- **Fase relacionada:** `webhook`
 
 ## Conta do WhatsApp Business com restrição
 `vivido` `#waba` `#suporte`

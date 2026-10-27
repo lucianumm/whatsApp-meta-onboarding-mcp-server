@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import * as z from "zod/v4";
-import { debugToken, formatExpiry, getWaba, listPhones, listSubscribedApps, listTemplates, type PhoneInfo, type TemplateInfo, type WabaInfo } from "../api.js";
+import { debugToken, formatExpiry, getPhoneHealth, getWaba, listPhones, listSubscribedApps, listTemplates, type PhoneInfo, type TemplateInfo, type WabaInfo } from "../api.js";
 import { PHASES } from "../knowledge/phases.js";
 import { clip, formatField, formatted, READ_ONLY, wabaIdField } from "./common.js";
 
@@ -108,6 +108,7 @@ export function registerDiagnoseTool(server: McpServer): void {
 
         // 3) Números
         let phones: PhoneInfo[] = [];
+        const wabaAliases = new Set<string>();
         try {
           phones = await listPhones(wabaId, signal);
           if (phones.length === 0) checks.push({ level: "fail", title: "Nenhum número na WABA", detail: "Adicione o número (fase conta-e-numero).", phase: "conta-e-numero" });
@@ -137,6 +138,30 @@ export function registerDiagnoseTool(server: McpServer): void {
             checks.push({ level: "warn", title: `${label}: plataforma ${phone.platform_type}`, detail: "Esperado CLOUD_API; o número pode não estar registrado (POST /{phone_id}/register).", phase: "conta-e-numero" });
           }
           checks.push({ level: "info", title: `${label}: qualidade ${phone.quality_rating ?? "?"} · tier ${phone.messaging_limit_tier ?? "ainda não informado"}`, detail: phone.is_on_biz_app ? "Também no app WhatsApp Business (coexistência)." : "Somente Cloud API.", phase: "primeiro-envio" });
+
+          // Saúde do número: bloqueio de pagamento (141006) e o ID da WABA que a Meta realmente usa.
+          try {
+            const health = await getPhoneHealth(phone.id, signal);
+            const blocked = (health?.entities ?? []).filter(entity => entity.can_send_message && entity.can_send_message !== "AVAILABLE");
+            if (blocked.length) {
+              for (const entity of blocked) {
+                const first = entity.errors?.[0];
+                checks.push({
+                  level: "fail",
+                  title: `${label}: envio BLOQUEADO (${entity.entity_type ?? "?"}${first?.error_code ? ` · ${first.error_code}` : ""})`,
+                  detail: `${first?.error_description ?? "can_send_message = " + entity.can_send_message}${first?.possible_solution ? ` → ${first.possible_solution}` : ""} A API aceita o envio (devolve wamid) e a mensagem não chega.`,
+                  phase: first?.error_code === 141006 ? "faturamento" : "primeiro-envio"
+                });
+              }
+            } else if (health?.entities?.length) {
+              checks.push({ level: "ok", title: `${label}: saúde do número sem bloqueio`, detail: "can_send_message = AVAILABLE em número, WABA, empresa e app.", phase: "primeiro-envio" });
+            }
+            for (const entity of health?.entities ?? []) {
+              if (entity.entity_type === "WABA" && entity.id && entity.id !== wabaId) wabaAliases.add(entity.id);
+            }
+          } catch (error) {
+            checks.push({ level: "info", title: `${label}: saúde do número indisponível`, detail: errorLine(error), phase: "primeiro-envio" });
+          }
         }
 
         // 4) Webhook
@@ -149,6 +174,19 @@ export function registerDiagnoseTool(server: McpServer): void {
           );
         } catch (error) {
           checks.push({ level: "warn", title: "Webhook: não consegui conferir", detail: errorLine(error), phase: "webhook" });
+        }
+        // A mesma conta pode ter dois IDs; a Meta entrega pelo que aparece no health_status do número.
+        for (const alias of wabaAliases) {
+          try {
+            const apps = await listSubscribedApps(alias, signal);
+            checks.push(
+              apps.length
+                ? { level: "ok", title: `Webhook: app inscrito também no ID ${alias}`, detail: apps.map(app => app.name ?? app.id ?? "?").join(", "), phase: "webhook" }
+                : { level: "fail", title: `Webhook: nenhum app inscrito no ID ${alias}`, detail: `O número aponta a WABA ${alias} (você usa ${wabaId}) — a mesma conta com outro ID. Sem assinatura nele, status e mensagens recebidas não chegam. Rode wa_subscribe_webhooks para ${alias}.`, phase: "webhook" }
+            );
+          } catch (error) {
+            checks.push({ level: "warn", title: `Webhook: não consegui conferir o ID ${alias}`, detail: errorLine(error), phase: "webhook" });
+          }
         }
 
         // 5) Templates
@@ -165,7 +203,7 @@ export function registerDiagnoseTool(server: McpServer): void {
         }
       }
 
-      checks.push({ level: "info", title: "Forma de pagamento", detail: "A API não expõe. Confira no billing hub; sem cartão só funciona a janela de 24h (erros 131042/141006).", phase: "faturamento" });
+      checks.push({ level: "info", title: "Forma de pagamento", detail: "A API não expõe o cartão, mas o bloqueio aparece na saúde do número (141006), conferida acima. Cadastre no billing hub; sem cartão só funciona a janela de 24h (erros 131042/141006).", phase: "faturamento" });
 
       const problems = checks.filter(check => check.level === "fail" || check.level === "warn");
       const order = (phaseId?: string) => PHASES.find(phase => phase.id === phaseId)?.order ?? 99;
