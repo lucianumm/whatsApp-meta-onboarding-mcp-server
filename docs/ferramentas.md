@@ -6,7 +6,7 @@
 |---|---|---|---|
 | [`wa_guide_overview`](#wa_guide_overview) | não | não | Mostra o caminho completo para ter um número (inclusive virtual) na API oficial do WhatsApp da Meta: as 12 fases em ordem, quem faz cada coisa (você / automático / juntos) e o que o agente nunca faz. |
 | [`wa_guide_get_phase`](#wa_guide_get_phase) | não | não | Devolve uma fase do caminho: passos (marcados VOCÊ / AUTOMÁTICO / JUNTOS), como saber que terminou e as armadilhas reais (sintoma → causa → o que fazer). |
-| [`wa_explain_error`](#wa_explain_error) | não | não | Traduz um erro da Meta/WhatsApp (código ou texto da tela) em significado, causa e o que fazer, apontando a fase do caminho relacionada. Cobre 27 erros: os vividos na prática (131037, 131042, 141006, #3441034, #2200, #200, #100, 'Conta com restrição'…) e os mais comuns da documentação pública (131047, 131030, 132001…). |
+| [`wa_explain_error`](#wa_explain_error) | não | não | Traduz um erro da Meta/WhatsApp (código ou texto da tela) em significado, causa e o que fazer, apontando a fase do caminho relacionada. Cobre 30 erros: os vividos na prática (131037, 131042, 141006, #3441034, #2200, #200, #100, 'Conta com restrição'…) e os mais comuns da documentação pública (131047, 131030, 132001…). |
 | [`wa_guide_search`](#wa_guide_search) | não | não | Busca em todos os passos, armadilhas e erros do guia, por texto (todas as palavras precisam aparecer, sem acento/caixa) e/ou por tag. Sem query e sem tag, devolve o índice de tags com as fases e erros de cada uma. |
 | [`wa_glossary`](#wa_glossary) | não | não | Define os termos que mais confundem no caminho: WABA, conta de mensagens, Phone Number ID, Usuário do Sistema, janela de 24h, tier, relay… Use quando o usuário misturar IDs ou conceitos. |
 | [`wa_check_token`](#wa_check_token) | sim | não | Valida o META_ACCESS_TOKEN com debug_token: se é de Usuário do Sistema (SYSTEM_USER), se expira, quais permissões tem e a quais contas de WhatsApp dá acesso. Nunca mostra o token. |
@@ -50,7 +50,7 @@ Exemplos:
 
 **Explicar um erro**
 
-Traduz um erro da Meta/WhatsApp (código ou texto da tela) em significado, causa e o que fazer, apontando a fase do caminho relacionada. Cobre 27 erros: os vividos na prática (131037, 131042, 141006, #3441034, #2200, #200, #100, 'Conta com restrição'…) e os mais comuns da documentação pública (131047, 131030, 132001…).
+Traduz um erro da Meta/WhatsApp (código ou texto da tela) em significado, causa e o que fazer, apontando a fase do caminho relacionada. Cobre 30 erros: os vividos na prática (131037, 131042, 141006, #3441034, #2200, #200, #100, 'Conta com restrição'…) e os mais comuns da documentação pública (131047, 131030, 132001…).
 
 Exemplos:
   - "Deu 131037 no envio" -> query="131037"

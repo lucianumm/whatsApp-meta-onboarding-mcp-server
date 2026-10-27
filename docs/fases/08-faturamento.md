@@ -25,5 +25,8 @@
 - `vivido` **Saúde do número mostra 141006 (erro no método de pagamento).**
   - Causa: Bloqueia conversas iniciadas pela empresa.
   - O que fazer: Cadastrar/corrigir a forma de pagamento.
+- `vivido` **Cadastrei o cartão e quero saber se liberou.**
+  - Causa: A API não expõe a forma de pagamento, e GET /{waba_id}?fields=primary_funding_id responde #10 'exige Business Solution Provider'.
+  - O que fazer: Leia GET /{phone_number_id}?fields=health_status: a entidade WABA passa de BLOCKED (141006) para AVAILABLE. Só então dispare — o que foi aceito durante o bloqueio não é reenviado.
 
 ➡️ Próxima fase: [`templates`](09-templates.md)

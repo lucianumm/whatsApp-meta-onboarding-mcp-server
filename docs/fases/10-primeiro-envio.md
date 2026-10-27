@@ -20,6 +20,9 @@
 - `vivido` **Duas conversas para a mesma pessoa (55DD9XXXXXXXX e 55DDXXXXXXXX).**
   - Causa: Número brasileiro com e sem o nono dígito: o WhatsApp identifica de um jeito no webhook e você digitou de outro.
   - O que fazer: Gere as duas variantes do número e procure conversa/contato por qualquer uma delas.
+- `vivido` **Campanha toda 'enviada' (wamid devolvido), mas nada chega ao celular e nenhum status volta.**
+  - Causa: Dois suspeitos que se somam: (1) WABA bloqueada por pagamento (141006) — a API aceita e a recusa só vem no status; (2) webhook sem assinatura no ID certo da conta, então nem a recusa chega ao sistema.
+  - O que fazer: Rode wa_diagnose: ele lê o health_status do número e compara os IDs da WABA. Resolva o pagamento e a assinatura, e dispare uma campanha nova.
 - `vivido` **Primeiro teste 'ok' na API e nada no celular.**
   - Causa: Ver o erro real no webhook de status: 131037 (nome de exibição em análise), 131042 (pagamento), 131047 (fora da janela, precisa de template), 131030 (número de teste: destinatário fora da lista).
   - O que fazer: wa_explain_error com o código.

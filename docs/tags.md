@@ -28,19 +28,19 @@
 
 ## `#ids` — WABA ID, Phone Number ID, IDs que confundem
 - Fases: `ids`
-- Erros: #100, Login sem acesso à conta no Gerenciador do WhatsApp
+- Erros: #100, #10, Nenhum aviso de status/mensagem chega, mas a WABA 'está assinada', Login sem acesso à conta no Gerenciador do WhatsApp
 
 ## `#token` — Usuário do Sistema, token e permissões
 - Fases: `usuario-sistema-token`
-- Erros: #200, #100, #190
+- Erros: #200, #100, #190, #10
 
 ## `#webhook` — Recebimento de mensagens e status
 - Fases: `webhook`
-- Erros: #2200
+- Erros: #2200, Nenhum aviso de status/mensagem chega, mas a WABA 'está assinada'
 
 ## `#faturamento` — Moeda, forma de pagamento e cobrança
 - Fases: `faturamento`
-- Erros: #131042, #141006
+- Erros: #131042, #141006, #10
 
 ## `#templates` — Modelos de mensagem
 - Fases: `templates`
@@ -48,7 +48,7 @@
 
 ## `#envio` — Envio, entrega e erros de entrega
 - Fases: `primeiro-envio`
-- Erros: #131037, #131042, #132012, #131047, #131030, #131026, #131056, #130429, #132000, #132001
+- Erros: #131037, #131042, #132012, #10, #131047, #131030, #131026, #131056, #130429, #132000, #132001
 
 ## `#suporte` — Como (e onde) pedir ajuda à Meta
 - Fases: `suporte-meta`

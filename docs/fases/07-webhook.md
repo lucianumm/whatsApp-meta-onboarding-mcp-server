@@ -32,6 +32,9 @@
 - `vivido` **A API devolve ok mas a mensagem não entrega; o sistema só mostra 'Message undeliverable'.**
   - Causa: O erro real vem no webhook de STATUS, em errors[].code + title + error_data.details — guardar só o 'message' genérico esconde a causa.
   - O que fazer: Grave code/title/details do evento e guarde o corpo cru de cada webhook recebido (ex.: uma tabela de eventos no relay) para depurar.
+- `vivido` **Callback verificado, campo 'messages' assinado, wa_check_webhook ok — e mesmo assim zero eventos (nem 'delivered' nem mensagens recebidas).**
+  - Causa: O app estava inscrito só em um dos dois IDs da mesma conta; a Meta entrega pelo outro, que ficou com subscribed_apps vazio.
+  - O que fazer: Assine o app também no ID que o health_status do número aponta (wa_diagnose mostra a diferença) e teste com mensagem nova.
 - `vivido` **Todo evento é recusado por assinatura.**
   - Causa: App Secret ausente ou de outro app.
   - O que fazer: Cole o App Secret do app CERTO no sistema (você, não o agente). Bom sistema confere a chave na Meta antes de salvar.

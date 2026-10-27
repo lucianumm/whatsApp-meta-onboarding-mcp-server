@@ -22,7 +22,7 @@ import { registerGraphTools } from "./tools/graphTools.js";
 import { registerGuideTools } from "./tools/guide.js";
 
 function createServer(): McpServer {
-  const server = new McpServer({ name: "whatsapp-meta-onboarding-mcp-server", version: "1.0.0" });
+  const server = new McpServer({ name: "whatsapp-meta-onboarding-mcp-server", version: "1.1.0" });
 
   registerGuideTools(server);
   registerGraphTools(server);

@@ -34,6 +34,18 @@ export interface PhoneInfo {
   throughput?: { level?: string };
 }
 
+export interface HealthEntity {
+  entity_type?: string;
+  id?: string;
+  can_send_message?: string;
+  errors?: { error_code?: number; error_description?: string; possible_solution?: string }[];
+}
+
+export interface PhoneHealth {
+  can_send_message?: string;
+  entities?: HealthEntity[];
+}
+
 export interface TemplateInfo {
   id: string;
   name: string;
@@ -78,6 +90,16 @@ export async function listPhones(wabaId: string, signal: AbortSignal): Promise<P
     signal
   );
   return response.data;
+}
+
+/**
+ * Saúde do número (GET /{phone_number_id}?fields=health_status): traz can_send_message por entidade
+ * (número, WABA, empresa, app) com o erro de cada uma. É a única forma de ver bloqueio de pagamento
+ * (141006) numa WABA comum — pedir primary_funding_id na WABA responde #10 'exige BSP'.
+ */
+export async function getPhoneHealth(phoneId: string, signal: AbortSignal): Promise<PhoneHealth | undefined> {
+  const response = await graphGet<{ health_status?: PhoneHealth }>(phoneId, { fields: "health_status" }, signal);
+  return response.health_status;
 }
 
 export async function listTemplates(wabaId: string, limit: number, after: string | undefined, signal: AbortSignal): Promise<{ templates: TemplateInfo[]; next?: string }> {
