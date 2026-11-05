@@ -1,6 +1,7 @@
 # WhatsApp Meta Onboarding — MCP Server
 
 ![MCP](https://img.shields.io/badge/MCP-SDK%20v2-6E56CF) ![Node](https://img.shields.io/badge/node-%E2%89%A520.3-339933) ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6) ![Graph API](https://img.shields.io/badge/Graph%20API-v25.0-1877F2) ![Idioma](https://img.shields.io/badge/idioma-pt--BR-009C3B) ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-yellow)
+[![M8ven Score](https://m8ven.ai/badge/mcp/lucianumm/whatsapp-meta-onboarding-mcp-server)](https://m8ven.ai/mcp/lucianumm/whatsapp-meta-onboarding-mcp-server?s=readme)
 
 `#mcp` `#whatsapp-cloud-api` `#numero-virtual` `#coexistencia` `#meta-graph-api` `#onboarding`
 
