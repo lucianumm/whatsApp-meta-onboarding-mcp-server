@@ -102,6 +102,12 @@ export const PHASES: Phase[] = [
     checks: [{ text: "App aparece como 'Ao vivo' e o App ID está anotado." }],
     pitfalls: [
       {
+        symptom: "Erro #190: 'Error validating application. Application has been deleted.'",
+        cause: "A Meta identifica o App ID configurado como pertencente a um aplicativo apagado. O código #190 também pode indicar token inválido ou expirado; o texto completo diferencia os casos.",
+        fix: "Confirme que o app está ativo. Se usar um substituto, alinhe App ID, App Secret e token de Usuário do Sistema ao mesmo app; conceda ao usuário os ativos necessários, gere um token com as permissões de WhatsApp usadas pelo sistema e refaça a configuração do webhook do app e a inscrição da WABA.",
+        lived: true,
+      },
+      {
         symptom: "Mensagens de um sistema caem na caixa de outro.",
         cause: "O webhook do WhatsApp é configurado por APP. Dois sistemas no mesmo app disputam a mesma URL de callback.",
         fix: "Um app por sistema, cada um com o seu callback. Se precisar compartilhar o app, use override_callback_uri por WABA (fase 'webhook') e nunca troque o callback do app.",
@@ -257,6 +263,12 @@ export const PHASES: Phase[] = [
         lived: true,
       },
       {
+        symptom: "Token permanente e válido, mas o diagnóstico aponta que falta whatsapp_business_messaging.",
+        cause: "O token foi gerado sem o escopo de envio. whatsapp_business_management não substitui whatsapp_business_messaging.",
+        fix: "Gere um token novo para o app ativo marcando whatsapp_business_messaging e whatsapp_business_management; valide os escopos com wa_check_token e atualize o token no sistema.",
+        lived: true,
+      },
+      {
         symptom: "(#10) 'You do not have WhatsApp granular permission for sending messages on behalf of this WhatsApp Business Account' ao enviar.",
         cause: "O escopo do token existe, mas o Usuário do Sistema não tem controle de mensagens sobre a WABA. Atribuir só 'Modelos de mensagem' basta para listar templates e NÃO basta para enviar. O token antigo pode não herdar a permissão nova.",
         fix: "Adicionar a WABA aos ativos do usuário com Controle total (ou Números + Mensagens), gerar um token novo e colar no sistema. Confira o granular_scopes com wa_check_token. Depois do ajuste o erro some no envio seguinte.",
@@ -305,8 +317,14 @@ export const PHASES: Phase[] = [
       },
       {
         symptom: "(#2200) Callback verification failed … DNS resolution timed out.",
-        cause: "A Meta não resolveu seu domínio naquele instante. Transitório.",
-        fix: "Confirme que o handshake responde (curl com hub.challenge) e repita.",
+        cause: "A Meta não conseguiu resolver o hostname do callback. Pode ser transitório; se persistir, o DNS ou a rota pública desse hostname pode estar inacessível à Meta mesmo que funcione no computador local.",
+        fix: "Confirme DNS, HTTPS e o handshake pelo hostname público. Se continuar falhando, use um hostname HTTPS estável que a Meta alcance e encaminhe apenas a rota do webhook ao relay; depois valide o callback de novo.",
+        lived: true,
+      },
+      {
+        symptom: "A WABA lista o app em subscribed_apps, mas o app não tem callback ou campo 'messages' assinado e nenhum evento chega.",
+        cause: "A inscrição da WABA e a configuração de webhook do app são etapas separadas; uma não cria a outra.",
+        fix: "Confira no app a URL de callback, o verify token e a assinatura do campo 'messages'; depois confirme subscribed_apps na WABA e teste com uma mensagem nova.",
         lived: true,
       },
       {
@@ -322,9 +340,9 @@ export const PHASES: Phase[] = [
         lived: true,
       },
       {
-        symptom: "Todo evento é recusado por assinatura.",
-        cause: "App Secret ausente ou de outro app.",
-        fix: "Cole o App Secret do app CERTO no sistema (você, não o agente). Bom sistema confere a chave na Meta antes de salvar.",
+        symptom: "Eventos são recusados por assinatura — especialmente depois de substituir o app.",
+        cause: "O relay ainda validava a assinatura com o App Secret do app anterior, ou o segredo estava ausente; o HMAC da Meta só confere com o App Secret do app que envia o webhook.",
+        fix: "Atualize o App Secret do app ativo em cada receptor/relay que valida X-Hub-Signature-256, recarregue o serviço e confirme o recebimento de um evento novo.",
         lived: true,
       },
       {

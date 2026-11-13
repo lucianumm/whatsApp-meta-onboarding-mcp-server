@@ -20,7 +20,7 @@
 
 ## `#app` — App no Meta for Developers
 - Fases: `app-meta`
-- Erros: —
+- Erros: #190
 
 ## `#waba` — Conta do WhatsApp Business e número
 - Fases: `conta-e-numero`, `ids`
@@ -32,11 +32,11 @@
 
 ## `#token` — Usuário do Sistema, token e permissões
 - Fases: `usuario-sistema-token`
-- Erros: #200, #100, #190, #10
+- Erros: #200, #100, #190, #10, Escopo whatsapp_business_messaging ausente no token
 
 ## `#webhook` — Recebimento de mensagens e status
 - Fases: `webhook`
-- Erros: #2200, Nenhum aviso de status/mensagem chega, mas a WABA 'está assinada'
+- Erros: #2200, #190, Nenhum aviso de status/mensagem chega, mas a WABA 'está assinada'
 
 ## `#faturamento` — Moeda, forma de pagamento e cobrança
 - Fases: `faturamento`
@@ -48,7 +48,7 @@
 
 ## `#envio` — Envio, entrega e erros de entrega
 - Fases: `primeiro-envio`
-- Erros: #131037, #131042, #132012, #10, #131047, #131030, #131026, #131056, #130429, #132000, #132001
+- Erros: #131037, #131042, #132012, #10, Escopo whatsapp_business_messaging ausente no token, #131047, #131030, #131026, #131056, #130429, #132000, #132001
 
 ## `#suporte` — Como (e onde) pedir ajuda à Meta
 - Fases: `suporte-meta`
