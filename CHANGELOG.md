@@ -2,6 +2,14 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/); versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [Unreleased]
+
+### Conhecimento
+- Erro **#190 "Application has been deleted"**: distinguir app apagado de token expirado e alinhar App ID, App Secret e token ao mesmo app ativo.
+- Token permanente válido sem `whatsapp_business_messaging`: diferenciar escopo OAuth ausente de falta de acesso granular do usuário à WABA.
+- Webhooks: deixar explícito que callback/campo `messages` no app e `subscribed_apps` na WABA são configurações separadas.
+- Após trocar o app, atualizar também o App Secret usado pelo relay para validar assinaturas; se a Meta repetir timeout de DNS (#2200), verificar o hostname público e encaminhar a rota HTTPS do webhook.
+
 ## [1.1.0] — 2026-10-27
 
 Implantação real do disparo local da Lumen Axis (Cloud API, número virtual, campanhas de template com imagem) até a mensagem chegar ao celular.

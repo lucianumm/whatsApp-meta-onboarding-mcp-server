@@ -17,6 +17,9 @@
 - [ ] App aparece como 'Ao vivo' e o App ID está anotado.
 
 ## Armadilhas
+- `vivido` **Erro #190: 'Error validating application. Application has been deleted.'**
+  - Causa: A Meta identifica o App ID configurado como pertencente a um aplicativo apagado. O código #190 também pode indicar token inválido ou expirado; o texto completo diferencia os casos.
+  - O que fazer: Confirme que o app está ativo. Se usar um substituto, alinhe App ID, App Secret e token de Usuário do Sistema ao mesmo app; conceda ao usuário os ativos necessários, gere um token com as permissões de WhatsApp usadas pelo sistema e refaça a configuração do webhook do app e a inscrição da WABA.
 - `vivido` **Mensagens de um sistema caem na caixa de outro.**
   - Causa: O webhook do WhatsApp é configurado por APP. Dois sistemas no mesmo app disputam a mesma URL de callback.
   - O que fazer: Um app por sistema, cada um com o seu callback. Se precisar compartilhar o app, use override_callback_uri por WABA (fase 'webhook') e nunca troque o callback do app.

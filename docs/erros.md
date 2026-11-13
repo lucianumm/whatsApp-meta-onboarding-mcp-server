@@ -56,6 +56,12 @@
 - **O que fazer:** Gerar token de Usuário do Sistema com 'Nunca expira' e validar com wa_check_token.
 - **Fase relacionada:** `usuario-sistema-token`
 
+## #190 — Aplicativo apagado (#190)
+`vivido` `#app` `#webhook`
+- **Significa:** Quando a resposta diz literalmente 'Application has been deleted', a Meta reporta como apagado o app apontado pelo App ID. Gerar outro token sem corrigir o app configurado não resolve.
+- **O que fazer:** Confirme o app ativo. Se usar um substituto, alinhe App ID, App Secret e token ao mesmo app; confira acesso do Usuário do Sistema, permissões de WhatsApp, callback e inscrição da WABA.
+- **Fase relacionada:** `app-meta`
+
 ## #132012 — Formato do parâmetro não confere (ex.: imagem do cabeçalho)
 `vivido` `#templates` `#envio`
 - **Significa:** Caso vivido: template com cabeçalho de imagem disparado sem reenviar a mídia. O header_handle da criação só vale para a aprovação.
@@ -66,6 +72,12 @@
 `vivido` `#token` `#envio`
 - **Significa:** Caso vivido: o token tem o escopo whatsapp_business_messaging, mas o Usuário do Sistema não foi atribuído à WABA com controle de mensagens. Só 'Modelos de mensagem' (que basta para sincronizar templates) não permite enviar. O envio falha na hora, sem wamid.
 - **O que fazer:** Configurações do negócio → Usuários do sistema → Adicionar ativos → Contas do WhatsApp → marque a WABA e dê Controle total (ou Números + Mensagens). Gere o token de novo no mesmo usuário, com whatsapp_business_messaging e whatsapp_business_management, e cole no sistema. Valide com wa_check_token (granular_scopes deve listar a WABA nos dois escopos).
+- **Fase relacionada:** `usuario-sistema-token`
+
+## Escopo whatsapp_business_messaging ausente no token
+`vivido` `#token` `#envio`
+- **Significa:** Um token pode ser permanente e válido, mas não consegue enviar se não tiver o escopo whatsapp_business_messaging. whatsapp_business_management é um escopo separado e não o substitui.
+- **O que fazer:** Gere um token novo para o app ativo marcando whatsapp_business_messaging e whatsapp_business_management; valide os escopos com wa_check_token e atualize o token no sistema. Se os dois escopos já existem e o envio retorna #10, confira a permissão granular do Usuário do Sistema na WABA.
 - **Fase relacionada:** `usuario-sistema-token`
 
 ## #10 — Campo exclusivo de BSP pedido a uma WABA comum (#10)
